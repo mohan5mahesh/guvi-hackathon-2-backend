@@ -3,6 +3,7 @@ import { MongoClient, ObjectId } from "mongodb";
 import dotenv from "dotenv";
 import cors from "cors";
 import bcrypt from "bcrypt";
+import { router as ProductsRouter } from "./routes/products.js";
 
 const product = express();
 dotenv.config();
@@ -26,31 +27,10 @@ product.get("/", (request, response) => {
   response.send("Hello MOTO!!");
 });
 
-product.get("/products", async (request, response) => {
-  const client = await createConnection();
-  const productList = await client
-    .db("rentalEquipments")
-    .collection("productList")
-    .find({})
-    .toArray();
-  response.send(productList);
-});
-
-product.get("/products/:productid", async (request, response) => {
-  const { productid } = request.params;
-  console.log(productid);
-  const client = await createConnection();
-  const productList = await client
-    .db("rentalEquipments")
-    .collection("productList")
-    .find({ _id: ObjectId(productid) })
-    .toArray();
-  response.send(productList);
-});
+product.use("/products", ProductsRouter);
 
 product.delete("/products/:productid", async (request, response) => {
   const { productid } = request.params;
-  console.log(productid);
   const client = await createConnection();
   const productList = await client
     .db("rentalEquipments")
