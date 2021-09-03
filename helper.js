@@ -1,4 +1,5 @@
 import { createConnection } from "./index.js";
+import { ObjectId } from "mongodb";
 
 async function getAllProducts() {
   const client = await createConnection();

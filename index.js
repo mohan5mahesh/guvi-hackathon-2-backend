@@ -1,5 +1,5 @@
 import express from "express";
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import cors from "cors";
 import bcrypt from "bcrypt";
