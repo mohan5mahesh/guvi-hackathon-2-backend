@@ -1,25 +1,76 @@
 import express from "express";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import dotenv from "dotenv";
 import cors from "cors";
 import bcrypt from "bcrypt";
 
 const product = express();
 dotenv.config();
+product.use(cors());
+product.use(express.json());
 
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
 
 //Make connectin to Mongo DB
 export async function createConnection() {
-    const client = new MongoClient(MONGO_URL);
-    await client.connect();
-    return client;
-  }
+  const client = new MongoClient(MONGO_URL);
+  await client.connect();
+  return client;
+}
 
 //To Setting the port connection
 product.listen(PORT, () => console.log("The server is started!", PORT));
 
 product.get("/", (request, response) => {
   response.send("Hello MOTO!!");
+});
+
+product.get("/products", async (request, response) => {
+  const client = await createConnection();
+  const productList = await client
+    .db("rentalEquipments")
+    .collection("productList")
+    .find({})
+    .toArray();
+  response.send(productList);
+});
+
+product.get("/products/:productid", async (request, response) => {
+  const { productid } = request.params;
+  console.log(productid);
+  const client = await createConnection();
+  const productList = await client
+    .db("rentalEquipments")
+    .collection("productList")
+    .find({ _id: ObjectId(productid) })
+    .toArray();
+  response.send(productList);
+});
+
+product.delete("/products/:productid", async (request, response) => {
+  const { productid } = request.params;
+  console.log(productid);
+  const client = await createConnection();
+  const productList = await client
+    .db("rentalEquipments")
+    .collection("productList")
+    .deleteOne({ _id: ObjectId(productid) });
+  response.send(productList);
+});
+
+product.post("/product/addproduct", async (request, response) => {
+  const { product_name, product_picture, product_rentaltime, product_price } =
+    request.body;
+  const client = await createConnection();
+  const product = await client
+    .db("rentalEquipments")
+    .collection("productList")
+    .insertOne({
+      product_name: product_name,
+      product_picture: product_picture,
+      product_rentaltime: product_rentaltime,
+      product_price: product_price,
+    });
+  response.send(product);
 });
