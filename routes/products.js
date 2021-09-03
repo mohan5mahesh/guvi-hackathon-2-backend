@@ -9,8 +9,8 @@ router.get("/", async (request, response) => {
 
 router.get("/:productid", async (request, response) => {
   const { productid } = request.params;
-  const productList = await getProductById(productid);
-  response.send(productList);
+  const product = await getProductById(productid);
+  response.send(product);
 });
 
 export { router };
